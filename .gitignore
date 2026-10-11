@@ -28,3 +28,4 @@ loss.png
 .vscode/
 .DS_Store
 Thumbs.db
+/iris.csv
