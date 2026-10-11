@@ -29,3 +29,8 @@ loss.png
 .DS_Store
 Thumbs.db
 /iris.csv
+
+# Local MLflow database
+mlflow.db
+mlflow.db-shm
+mlflow.db-wal

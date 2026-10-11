@@ -1,3 +1,6 @@
+import joblib
+import mlflow
+mlflow.set_experiment("Iris_Neural_Network")
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -41,6 +44,7 @@ print("Testing Data:", X_test.shape)
 scaler = StandardScaler()
 
 X_train = scaler.fit_transform(X_train)
+joblib.dump(scaler, "scaler.pkl")
 X_test = scaler.transform(X_test)
 
 
@@ -58,21 +62,61 @@ model.compile(
     metrics=["accuracy"]
 )
 
-history = model.fit(
-    X_train,
-    y_train,
-    epochs=40,
-    batch_size=8,
-    validation_split=0.2,
-    verbose=1
-)
 
-# 8. Evaluate model
-loss, accuracy = model.evaluate(
-    X_test,
-    y_test,
-    verbose=0
+# MLflow experiment tracking
+with mlflow.start_run():
+    # Log model parameters
+    mlflow.log_param("epochs", 40)
+    mlflow.log_param("batch_size", 8)
+    mlflow.log_param("learning_rate", 0.001)
+    mlflow.log_param("hidden_layer_1", 32)
+    mlflow.log_param("hidden_layer_2", 16)
+    mlflow.log_param("optimizer", "Adam")
+
+    # Train the model
+    history = model.fit(
+        X_train,
+        y_train,
+        epochs=40,
+        batch_size=8,
+        validation_split=0.2,
+        verbose=1
+    )
+
+    # Evaluate on the test dataset
+    loss, accuracy = model.evaluate(
+        X_test,
+        y_test,
+        verbose=0
+    )
+
+    # Log test metrics
+   
+mlflow.log_metric("test_accuracy", float(accuracy))
+mlflow.log_metric("test_loss", float(loss))
+
+# Log final training and validation metrics
+mlflow.log_metric(
+    "final_training_accuracy",
+    float(history.history["accuracy"][-1])
 )
+mlflow.log_metric(
+    "final_validation_accuracy",
+    float(history.history["val_accuracy"][-1])
+)
+mlflow.log_metric(
+    "final_training_loss",
+    float(history.history["loss"][-1])
+)
+mlflow.log_metric(
+    "final_validation_loss",
+    float(history.history["val_loss"][-1])
+)
+model.save("iris_model.keras")
+# Log the trained TensorFlow model
+mlflow.tensorflow.log_model(model, name="iris_neural_network")
+
+
 
 print("\nTest Accuracy:")
 print(accuracy)
