@@ -1,4 +1,4 @@
-
+from monitoring import log_prediction
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
@@ -302,13 +302,23 @@ def predict(data: IrisInput):
         scaled_features = scaler.transform(features)
         predictions = model.predict(scaled_features, verbose=0)[0]
         predicted_index = int(np.argmax(predictions))
+        predicted_species = species_names[predicted_index]
+
+        probabilities = {
+            species_names[i]: float(predictions[i])
+            for i in range(len(predictions))
+        }
+
+        log_prediction(
+            features=features[0].tolist(),
+            predicted_species=predicted_species,
+            probabilities=probabilities
+        )
+        print("PREDICTION LOGGED:", predicted_species, flush=True)
 
         return {
-            "predicted_species": species_names[predicted_index],
-            "probabilities": {
-                species_names[i]: float(predictions[i])
-                for i in range(len(predictions))
-            }
-        }
+    "predicted_species": predicted_species,
+    "probabilities": probabilities
+}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
