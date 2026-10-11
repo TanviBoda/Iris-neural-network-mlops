@@ -50,5 +50,5 @@ jobs:
           python -m pip install -r requirements.txt
           python -m pip install "dvc==3.67.1"
 
-      - name: Run DVC pipeline
-        run: python -m dvc repro
+      - name: Train neural network
+  run: python neural_network.py
