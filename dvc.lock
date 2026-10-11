@@ -1,0 +1,26 @@
+schema: '2.0'
+stages:
+  train:
+    cmd: python neural_network.py
+    deps:
+    - path: iris.csv
+      hash: md5
+      md5: 72de67d2f0a43b9f53c08f399d9e96ef
+      size: 3878
+    - path: neural_network.py
+      hash: md5
+      md5: 16cc06fa0a21cb00c4f8cb4a19931b45
+      size: 2859
+    outs:
+    - path: accuracy.png
+      hash: md5
+      md5: 0689208bcb310a864b4a41b65dcdbffc
+      size: 29192
+    - path: confusion_matrix.png
+      hash: md5
+      md5: 619ca292e98ddb5cae95eeca020fb463
+      size: 21857
+    - path: loss.png
+      hash: md5
+      md5: 88a2c91bad41bca0658221eb6bc85336
+      size: 28124

@@ -1,0 +1,11 @@
+
+stages:
+  train:
+    cmd: python neural_network.py
+    deps:
+      - neural_network.py
+      - iris.csv
+    outs:
+      - confusion_matrix.png
+      - accuracy.png
+      - loss.png
