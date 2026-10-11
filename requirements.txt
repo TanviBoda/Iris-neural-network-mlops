@@ -5,3 +5,6 @@ tensorflow
 numpy
 scikit-learn
 joblib
+pandas
+matplotlib
+mlflow
