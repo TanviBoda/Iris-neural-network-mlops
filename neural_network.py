@@ -89,6 +89,21 @@ with mlflow.start_run():
         y_test,
         verbose=0
     )
+    
+    # Validate model accuracy
+    MINIMUM_ACCURACY = 0.90
+
+    print(f"\nTest accuracy: {accuracy:.2%}")
+    print(f"Minimum required accuracy: {MINIMUM_ACCURACY:.2%}")
+
+    if accuracy < MINIMUM_ACCURACY:
+        raise ValueError(
+            f"Model accuracy {accuracy:.2%} is below "
+            f"the required {MINIMUM_ACCURACY:.2%}"
+        )
+
+    print("Model accuracy validation passed!")
+
 
     # Log test metrics
    
