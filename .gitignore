@@ -1,0 +1,30 @@
+
+# Python virtual environments
+venv/
+.venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local secrets
+.env
+
+# MLflow local tracking data
+mlruns/
+
+# DVC local cache
+.dvc/cache/
+
+# Generated plots
+confusion_matrix.png
+accuracy.png
+loss.png
+
+# Editor and OS files
+.vscode/
+.DS_Store
+Thumbs.db
