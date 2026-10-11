@@ -106,50 +106,30 @@ disp = ConfusionMatrixDisplay(
     display_labels=encoder.classes_
 )
 
-
 disp.plot()
-
 plt.title("Iris Classification using TensorFlow Neural Network")
-plt.show()
+plt.savefig("confusion_matrix.png")
+plt.close()
 
 
 # 12. Accuracy graph
 plt.figure()
-
-plt.plot(
-    history.history["accuracy"],
-    label="Training Accuracy"
-)
-
-plt.plot(
-    history.history["val_accuracy"],
-    label="Validation Accuracy"
-)
-
+plt.plot(history.history["accuracy"], label="Training Accuracy")
+plt.plot(history.history["val_accuracy"], label="Validation Accuracy")
 plt.title("Training and Validation Accuracy")
 plt.xlabel("Epoch")
 plt.ylabel("Accuracy")
 plt.legend()
-
-plt.show()
-
+plt.savefig("accuracy.png")
+plt.close()
 
 # 13. Loss graph
 plt.figure()
-
-plt.plot(
-    history.history["loss"],
-    label="Training Loss"
-)
-
-plt.plot(
-    history.history["val_loss"],
-    label="Validation Loss"
-)
-
+plt.plot(history.history["loss"], label="Training Loss")
+plt.plot(history.history["val_loss"], label="Validation Loss")
 plt.title("Training and Validation Loss")
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
 plt.legend()
-
-plt.show()
+plt.savefig("loss.png")
+plt.close()
