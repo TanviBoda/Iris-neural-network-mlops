@@ -1,3 +1,7 @@
+import time
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import HTMLResponse, Response
 from monitoring import log_prediction
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
@@ -5,7 +9,21 @@ from pydantic import BaseModel, Field
 from tensorflow import keras
 import numpy as np
 import joblib
+prediction_requests = Counter(
+    "iris_prediction_requests_total",
+    "Total number of Iris prediction requests"
+)
 
+predictions_by_species = Counter(
+    "iris_predictions_by_species_total",
+    "Total predictions by Iris species",
+    ["species"]
+)
+
+prediction_duration = Histogram(
+    "iris_prediction_duration_seconds",
+    "Time taken to make Iris predictions"
+)
 app = FastAPI(
     title="Iris AI",
     description="Iris flower classification using a neural network",
@@ -283,14 +301,23 @@ form.addEventListener("reset", () => {
 </html>
 """
 
-
+@app.get("/metrics")
+def metrics():
+    return Response(
+        content=generate_latest(),
+        media_type=CONTENT_TYPE_LATEST
+    )
 @app.get("/health")
 def health():
     return {"status": "healthy", "model_loaded": True}
 
 
+
 @app.post("/predict", response_model=IrisPrediction)
 def predict(data: IrisInput):
+    start_time = time.perf_counter()
+    prediction_requests.inc()
+
     try:
         features = np.array([[
             data.sepal_length,
@@ -314,11 +341,21 @@ def predict(data: IrisInput):
             predicted_species=predicted_species,
             probabilities=probabilities
         )
+
+        predictions_by_species.labels(
+            species=predicted_species
+        ).inc()
+
         print("PREDICTION LOGGED:", predicted_species, flush=True)
 
         return {
-    "predicted_species": predicted_species,
-    "probabilities": probabilities
-}
+            "predicted_species": predicted_species,
+            "probabilities": probabilities
+        }
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        prediction_duration.observe(time.perf_counter() - start_time)
+
